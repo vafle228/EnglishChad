@@ -3,12 +3,16 @@ from telebot import TeleBot
 from MessageStructs.basestruct import IMessage
 from ChadUtils.constants import API_REQUEST
 from typing import Union
+from ChadUtils.constants import MAX_FILE_SIZE
 
 
 class TelegramMessage(IMessage):
-    def __init__(self, message: Message, tele_bot: TeleBot) -> None:
+    def __init__(self, message: Message, bot: TeleBot) -> None:
         self._message = message
-        self._tele_bot = tele_bot
+
+        self._file_info = None
+        if message.document is not None and message.document.file_size < MAX_FILE_SIZE:
+            self._file_info = bot.get_file(message.document.file_id)
     
     @property
     def username(self) -> str:
@@ -20,16 +24,18 @@ class TelegramMessage(IMessage):
     
     @property
     def file_name(self) -> Union[str, None]:
-        if self._message.document:
-            return self._message.document.file_name
+        if self._file_info is None:
+            return None
+        return self._file_info.file_path.split("/")[-1]
     
     @property
     def file_url(self) -> Union[str, None]:
-        if self._message.document:
-            file_info = self._tele_bot.get_file(self._file_id)
-            return API_REQUEST + file_info.file_path
+        if self._file_info is None:
+            return None
+        return API_REQUEST + self._file_info.file_path
     
     @property
-    def _file_id(self) -> Union[str, None]:
-        if self._message.document:
-            return self._message.document.file_id
+    def file_size(self) -> Union[int, None]:
+        if self._file_info is None:
+            return None
+        return self._file_info.file_size

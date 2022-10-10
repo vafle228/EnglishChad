@@ -4,4 +4,5 @@ AWS_SECRET_ACCESS_KEY = "NnY3zfGq3nblfc925wVcEn0ifkhQgR8yyaWrYPov"
 REGION_NAME = "eu-central-1"
 API_REQUEST = f"https://api.telegram.org/file/bot{API_KEY}/"
 TEMP_ROOT = "tmp/{0}"
+MAX_FILE_SIZE = 20 * 1024 * 1024  # 20MB
 

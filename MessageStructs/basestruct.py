@@ -22,3 +22,8 @@ class IMessage(ABC):
     @abstractmethod
     def file_url(self) -> Union[str, None]:
         raise NotImplementedError
+    
+    @property
+    @abstractmethod
+    def file_size(self) -> Union[int, None]:
+        raise NotImplementedError

@@ -64,4 +64,4 @@ class AddEntryMixin:
 
     @classmethod
     def _validateEntryFile(cls, message: IMessage) -> bool:
-        return message.file_name  # Check if there is a file name
+        return message.file_name  # Check if there is a file_name
