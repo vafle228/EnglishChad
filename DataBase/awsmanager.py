@@ -1,8 +1,8 @@
 from pathlib import Path
 
 import boto3
-from constants import (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, REGION_NAME,
-                       TEMP_ROOT)
+from ChadUtils.constants import (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY,
+                                 REGION_NAME, TEMP_ROOT)
 
 
 class ChadAWSManager:

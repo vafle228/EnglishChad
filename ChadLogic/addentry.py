@@ -2,10 +2,10 @@ import os
 from typing import Tuple
 
 import requests
-from constants import API_REQUEST, TEMP_ROOT
+from ChadUtils.constants import TEMP_ROOT
 from DataBase.awsmanager import ChadAWSManager
 from DataBase.dbmanager import ChadDataBaseManager
-from telebot.types import Message
+from MessageStructs.basestruct import IMessage
 
 from ChadLogic.replies import (ADD_NAME_ERROR_MSG, ADD_NAME_SUCCESS_MSG,
                                ADD_START_MSG, ADD_SUCCESS_MSG)
@@ -18,50 +18,50 @@ class AddEntryMixin:
     _aws_storage = ChadAWSManager()
 
     @classmethod
-    def startAddCommand(cls, message: Message) -> Tuple[bool, str]:
+    def startAddCommand(cls, message: IMessage) -> Tuple[bool, str]:
         return (True, ADD_START_MSG)
 
     @classmethod
-    def getEntryName(cls, message: Message) -> Tuple[bool, str]:
+    def getEntryName(cls, message: IMessage) -> Tuple[bool, str]:
         if not cls._validateEntryAddName(message):
             return (False, ADD_NAME_ERROR_MSG)
 
-        cls._replies[message.chat.username] = message.text
+        cls._replies[message.username] = message.text
         return (True, ADD_NAME_SUCCESS_MSG)
 
     @classmethod
-    def getEntryFile(cls, message: Message) -> Tuple[bool, str]:
+    def getEntryFile(cls, message: IMessage) -> Tuple[bool, str]:
         if not cls._validateEntryFile(message):
             return (False, ADD_NAME_ERROR_MSG)
 
-        cls._saveUserFile(message.document.file_id, message.document.file_name)
+        cls._saveUserFile(message.file_url, message.file_name)
 
-        username = message.chat.username
+        username = message.username
         entry_name = cls._replies[username]
-        file_path = f"{username}/{message.document.file_name}"
+        file_path = f"{username}/{message.file_name}"
 
         cls._aws_storage.uploadFile(file_path)
         cls._database.addEntry(entry_name, username, file_path)
 
         cls._replies.pop(username)
-        os.remove(TEMP_ROOT.format(message.document.file_name))
+        os.remove(TEMP_ROOT.format(message.file_name))
 
         return (True, ADD_SUCCESS_MSG.format(entry_name))
 
     @classmethod
-    def _saveUserFile(cls, file_id, file_name) -> None:
+    def _saveUserFile(cls, file_url: str, file_name: str) -> None:
         with open(TEMP_ROOT.format(file_name), "wb") as file:
-            file.write(cls._downloadFileFromApi(file_id))
+            file.write(cls._downloadFileFromApi(file_url))
         file.close()
 
     @classmethod
-    def _downloadFileFromApi(cls, file_id) -> bytes:
-        return requests.get(API_REQUEST.format(file_id)).content
+    def _downloadFileFromApi(cls, file_url: str) -> bytes:
+        return requests.get(file_url).content
 
     @classmethod
-    def _validateEntryAddName(cls, message: Message) -> bool:
+    def _validateEntryAddName(cls, message: IMessage) -> bool:
         return message.text and not cls._database.getEntryByName(message.text)
 
     @classmethod
-    def _validateEntryFile(cls, message: Message) -> bool:
-        return message.document
+    def _validateEntryFile(cls, message: IMessage) -> bool:
+        return message.file_name  # Check if there is a file name

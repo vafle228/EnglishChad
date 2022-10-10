@@ -1,34 +1,28 @@
-import telebot
-from ChadLogic.englishchad import EnglishChadBot
-from telebot.types import Message
 from io import BufferedReader
 
-from constants import API_KEY
+import telebot
+from telebot.types import Message
+
+from ChadLogic.englishchad import EnglishChadBot
+from ChadUtils.constants import API_KEY
+from MessageStructs.telegramstruct import TelegramMessage
 
 bot = telebot.TeleBot(API_KEY)
 
 
-@bot.message_handler(commands=['addSolution'])
+@bot.message_handler(commands=["addSolution", "getSolution", "delSolution"])
 def addNewEntry(message: Message):
-    EnglishChadBot.startUserHandling(message, "/addSolution")
-    bot.send_message(message.chat.id, EnglishChadBot.handleUserMessage(message))
-
-
-@bot.message_handler(commands=['getSolution'])
-def getEntryByName(message: Message):
-    EnglishChadBot.startUserHandling(message, "/getSolution")
-    bot.send_message(message.chat.id, EnglishChadBot.handleUserMessage(message))
-
-
-@bot.message_handler(commands=['delSolution'])
-def deleteEntryByName(message: Message):
-    EnglishChadBot.startUserHandling(message, "/delSolution")
-    bot.send_message(message.chat.id, EnglishChadBot.handleUserMessage(message))
+    command = message.text.split(" ")[0]
+    tele_messsage = TelegramMessage(message, bot)
+    
+    EnglishChadBot.startUserHandling(tele_messsage, command)
+    bot.send_message(message.chat.id, EnglishChadBot.handleUserMessage(tele_messsage))
 
 
 @bot.message_handler(content_types=["document", "text"])
 def replyToMessage(message: Message):
-    result = EnglishChadBot.handleUserMessage(message)
+    tele_messsage = TelegramMessage(message, bot)
+    result = EnglishChadBot.handleUserMessage(tele_messsage)
 
     if isinstance(result, BufferedReader):
         bot.send_document(message.chat.id, result)

@@ -2,7 +2,7 @@ from typing import Tuple
 
 from DataBase.awsmanager import ChadAWSManager
 from DataBase.dbmanager import ChadDataBaseManager
-from telebot.types import Message
+from MessageStructs.basestruct import IMessage
 
 from ChadLogic.replies import (DELETE_ERROR_MSG, DELETE_START_MSG,
                                DELETE_SUCCESS_MSG)
@@ -13,11 +13,11 @@ class DeleteEntryMixin:
     _aws_storage = ChadAWSManager()
 
     @classmethod
-    def startDelCommand(cls, message: Message) -> Tuple[bool, str]:
+    def startDelCommand(cls, message: IMessage) -> Tuple[bool, str]:
         return (True, DELETE_START_MSG)
 
     @classmethod
-    def delEntry(cls, message: Message) -> Tuple[bool, str]:
+    def delEntry(cls, message: IMessage) -> Tuple[bool, str]:
         if not cls._hasPermission(message):
             return (False, DELETE_ERROR_MSG)
 
@@ -30,8 +30,8 @@ class DeleteEntryMixin:
         return (True, DELETE_SUCCESS_MSG.format(entry_name))
 
     @classmethod
-    def _hasPermission(cls, message: Message) -> bool:
+    def _hasPermission(cls, message: IMessage) -> bool:
         entry_name = message.text
         entry = cls._database.getEntryByName(entry_name)
 
-        return entry and entry[0][1] == message.chat.username
+        return entry and entry[0][1] == message.username
