@@ -38,7 +38,7 @@ class AddEntryMixin:
 
         username = message.username
         entry_name = cls._replies[username]
-        file_path = f"{username}/{message.file_name}"
+        file_path = f"{username}/{entry_name}/{message.file_name}"
 
         cls._aws_storage.uploadFile(file_path)
         cls._database.addEntry(entry_name, username, file_path)

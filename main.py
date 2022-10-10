@@ -1,3 +1,4 @@
+import os
 from io import BufferedReader
 
 import telebot
@@ -24,10 +25,11 @@ def replyToMessage(message: Message):
     tele_messsage = TelegramMessage(message, bot)
     result = EnglishChadBot.handleUserMessage(tele_messsage)
 
-    if isinstance(result, BufferedReader):
-        bot.send_document(message.chat.id, result)
-    else:
-        bot.send_message(message.chat.id, result)
+    if not isinstance(result, BufferedReader):
+        return bot.send_message(message.chat.id, result)
+        
+    bot.send_document(message.chat.id, result)
+    result.close(); os.remove(result.name) 
 
 
 if __name__ == "__main__":
