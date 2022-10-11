@@ -27,3 +27,13 @@ class IMessage(ABC):
     @abstractmethod
     def file_size(self) -> Union[int, None]:
         raise NotImplementedError
+    
+    @property
+    @abstractmethod
+    def chat_id(self) -> int:
+        raise NotImplementedError
+    
+    @property
+    @abstractmethod
+    def id(self) -> int:
+        raise NotImplementedError

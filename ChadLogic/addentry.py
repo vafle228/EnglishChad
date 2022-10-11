@@ -6,6 +6,7 @@ from ChadUtils.constants import TEMP_ROOT
 from DataBase.awsmanager import ChadAWSManager
 from DataBase.dbmanager import ChadDataBaseManager
 from MessageStructs.basestruct import IMessage
+from ProgressBar.telergambar import telegramProgressBarWrapper
 
 from ChadLogic.replies import (ADD_NAME_ERROR_MSG, ADD_NAME_SUCCESS_MSG,
                                ADD_START_MSG, ADD_SUCCESS_MSG)
@@ -40,8 +41,8 @@ class AddEntryMixin:
         entry_name = cls._replies[username]
         file_path = f"{username}/{entry_name}/{message.file_name}"
 
-        cls._aws_storage.uploadFile(file_path)
         cls._database.addEntry(entry_name, username, file_path)
+        cls._aws_storage.uploadFile(file_path, telegramProgressBarWrapper(message))
 
         cls._replies.pop(username)
         os.remove(TEMP_ROOT.format(message.file_name))

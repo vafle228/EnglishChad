@@ -6,6 +6,7 @@ from ChadUtils.constants import TEMP_ROOT
 from DataBase.awsmanager import ChadAWSManager
 from DataBase.dbmanager import ChadDataBaseManager
 from MessageStructs.basestruct import IMessage
+from ProgressBar.telergambar import telegramProgressBarWrapper
 
 from ChadLogic.replies import GET_ERROR_MSG, GET_START_MSG
 
@@ -24,7 +25,7 @@ class GetEntryMixin:
             return (False, GET_ERROR_MSG)
 
         entry = cls._database.getEntryByName(message.text)[0]
-        cls._aws_storage.downloadFile(entry[3])
+        cls._aws_storage.downloadFile(entry[3], telegramProgressBarWrapper(message))
 
         return (True, open(TEMP_ROOT.format(Path(entry[3]).name), "rb"))
 

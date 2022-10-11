@@ -27,7 +27,7 @@ def replyToMessage(message: Message):
 
     if not isinstance(result, BufferedReader):
         return bot.send_message(message.chat.id, result)
-        
+    
     bot.send_document(message.chat.id, result)
     result.close(); os.remove(result.name) 
 

@@ -10,7 +10,7 @@ class ChadDataBaseManager:
         return cls._chad_base
 
     def __init__(self) -> None:
-        self._connection = sql.connect('db.sqlite3', check_same_thread=False)
+        self._connection = sql.connect('./db.sqlite3', check_same_thread=False)
         self._database = self._connection.cursor()
 
         try:

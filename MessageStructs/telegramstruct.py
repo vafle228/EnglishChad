@@ -39,3 +39,11 @@ class TelegramMessage(IMessage):
         if self._file_info is None:
             return None
         return self._file_info.file_size
+    
+    @property
+    def chat_id(self) -> int:
+        return self._message.chat.id
+    
+    @property
+    def id(self) -> int:
+        return self._message.id
