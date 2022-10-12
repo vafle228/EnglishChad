@@ -27,7 +27,7 @@ class EnglishChadBot(
             "/start": [cls.sendHelpMessage],
             "/delSolution": [cls.startDelCommand ,cls.delEntry],
             "/getSolution": [cls.startGetCommand, cls.getEntry],
-            "/showSolutions": [cls.startShowCommand, cls.showEntriesList],
+            "/showSolution": [cls.startShowCommand, cls.showEntriesList],
             "/addSolution": [cls.startAddCommand, cls.getEntryName, cls.getEntryFile],
         }[command]
     
