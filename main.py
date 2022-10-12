@@ -13,7 +13,7 @@ bot = telebot.TeleBot(API_KEY)
 
 @bot.message_handler(commands=[
     "start", "help", "addSolution", 
-    "getSolution", "delSolution", "showSolutions", 
+    "getSolution", "delSolution", "showSolution", 
 ])
 def addNewEntry(message: Message):
     command = message.text.split(" ")[0]
