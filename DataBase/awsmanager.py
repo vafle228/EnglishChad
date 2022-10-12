@@ -11,11 +11,6 @@ from ProgressBar.progressbase import IProgressBar
 class ChadAWSManager:
     _chad_aws = None
 
-    def __new__(cls, *args, **kwargs):
-        if cls._chad_aws is None:
-            cls._chad_aws = super().__new__(cls, *args, **kwargs)
-        return cls._chad_aws
-
     def __init__(self):
         self._bucket_name = "english-chad"
         
@@ -24,6 +19,12 @@ class ChadAWSManager:
             aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
             region_name=REGION_NAME,
         ).client('s3')
+    
+    @classmethod
+    def getInstance(cls):
+        if cls._chad_aws is None:
+            cls._chad_aws = cls()
+        return cls._chad_aws
 
     def uploadFile(self, upload_path: str, callback: Union[Type[IProgressBar], None] = None) -> None:
         with open(TEMP_ROOT.format(Path(upload_path).name), "rb") as file:

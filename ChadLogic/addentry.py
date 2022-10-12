@@ -15,6 +15,9 @@ from ChadLogic.replies import (ADD_NAME_ERROR_MSG, ADD_NAME_SUCCESS_MSG,
 class AddEntryMixin:
     _replies = dict()
 
+    _aws_storage = ChadAWSManager().getInstance()
+    _database = ChadDataBaseManager().getInstance()
+
     @classmethod
     def startAddCommand(cls, message: IMessage) -> Tuple[bool, str]:
         return (True, ADD_START_MSG)
@@ -38,8 +41,8 @@ class AddEntryMixin:
         entry_name = cls._replies[username]
         file_path = f"{username}/{entry_name}/{message.file_name}"
 
-        ChadDataBaseManager().addEntry(entry_name, username, file_path)
-        ChadAWSManager().uploadFile(file_path, telegramProgressBarWrapper(message))
+        cls._database.addEntry(entry_name, username, file_path)
+        cls._aws_storage.uploadFile(file_path, telegramProgressBarWrapper(message))
 
         cls._replies.pop(username)
         os.remove(TEMP_ROOT.format(message.file_name))
@@ -58,7 +61,7 @@ class AddEntryMixin:
 
     @classmethod
     def _validateEntryAddName(cls, message: IMessage) -> bool:
-        return message.text and not ChadDataBaseManager().getEntryByName(message.text)
+        return message.text and not cls._database.getEntryByName(message.text)
 
     @classmethod
     def _validateEntryFile(cls, message: IMessage) -> bool:

@@ -11,12 +11,15 @@ from ChadLogic.replies import (EMPTY_DB_ERROR, MAX_PAGE_ERROR, PAGE_ERROR_MSG,
 
 
 class ShowAllEntriesMixin:
+    _database = ChadDataBaseManager().getInstance()
     _etries_list: List[Tuple[int, str, str, str]] = None
 
     @classmethod
     def startShowCommand(cls, message: IMessage) -> Tuple[bool, str]:
         if cls._etries_list is None:
-            cls._updateEntriesList()  # Initing array with actual db values
+            ChadSubscriber.addNewSubsciber(
+                Subscriptions.DATA_BASE_UPDATE, cls._updateEntriesList
+            ); cls._updateEntriesList()  # First call init
         return (True, SHOW_START_MSG.format(cls.total_page()))
     
     @classmethod
@@ -42,14 +45,14 @@ class ShowAllEntriesMixin:
     def _formPageList(cls, cur_page: int) -> Tuple[bool, str]:
         entries = ""
         for i in range((cur_page - 1) * ENTRY_PER_PAGE, cur_page * ENTRY_PER_PAGE):
-            if i == len(cls._etries_list) - 1:
+            if i == len(cls._etries_list):
                 return (False, entries + SHOW_SUCCESS_MSG.format(cls.total_page()))
             entries += f"{i + 1}: {cls._etries_list[i][2]} от @{cls._etries_list[i][1]}\n"
         return (False, entries + SHOW_SUCCESS_MSG.format(cls.total_page()))
     
     @classmethod
     def _updateEntriesList(cls, *args, **kwargs) -> None:
-        cls._etries_list = ChadDataBaseManager().getAllEntries()
+        cls._etries_list = cls._database.getAllEntries()
     
     @classmethod
     def _validatePageValue(cls, message: IMessage) -> bool:
@@ -57,10 +60,4 @@ class ShowAllEntriesMixin:
     
     @classmethod
     def _validateMaxPage(cls, message: IMessage) -> bool:
-        return int(message.text) <= cls.total_page()
-
-
-ChadSubscriber.addNewSubsciber(
-    Subscriptions.DATA_BASE_UPDATE, 
-    ShowAllEntriesMixin._updateEntriesList
-)
+        return 0 < int(message.text) <= cls.total_page()
