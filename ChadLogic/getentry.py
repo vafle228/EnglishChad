@@ -12,9 +12,6 @@ from ChadLogic.replies import GET_ERROR_MSG, GET_START_MSG
 
 
 class GetEntryMixin:
-    _database = ChadDataBaseManager()
-    _aws_storage = ChadAWSManager()
-
     @classmethod
     def startGetCommand(cls, message: IMessage) -> Tuple[bool, str]:
         return (True, GET_START_MSG)
@@ -24,11 +21,11 @@ class GetEntryMixin:
         if not cls._validateEntryGetName(message):
             return (False, GET_ERROR_MSG)
 
-        entry = cls._database.getEntryByName(message.text)[0]
-        cls._aws_storage.downloadFile(entry[3], telegramProgressBarWrapper(message))
+        entry = ChadDataBaseManager().getEntryByName(message.text)[0]
+        ChadAWSManager().downloadFile(entry[3], telegramProgressBarWrapper(message))
 
         return (True, open(TEMP_ROOT.format(Path(entry[3]).name), "rb"))
 
     @classmethod
     def _validateEntryGetName(cls, message: IMessage) -> bool:
-        return message.text and cls._database.getEntryByName(message.text)
+        return message.text and ChadDataBaseManager().getEntryByName(message.text)

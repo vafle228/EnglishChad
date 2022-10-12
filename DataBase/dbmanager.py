@@ -1,4 +1,6 @@
 import sqlite3 as sql
+from typing import List, Tuple
+from ChadUtils.subscriber import Subscriptions, ChadSubscriber
 
 
 class ChadDataBaseManager:
@@ -31,16 +33,21 @@ class ChadDataBaseManager:
             ('{name}', '{author}', '{file_path}')
         ''')
         self._connection.commit()
+        ChadSubscriber.emitToSubscribers(Subscriptions.DATA_BASE_UPDATE)
 
-    def deleteEntryByNames(self, entry_name) -> None:
+    def deleteEntryByNames(self, entry_name: str) -> None:
         self._database.execute(f'''
             DELETE FROM EnglishChad 
             WHERE name = '{entry_name}'
         ''')
         self._connection.commit()
+        ChadSubscriber.emitToSubscribers(Subscriptions.DATA_BASE_UPDATE)
 
-    def getEntryByName(self, entry_name) -> list:
+    def getEntryByName(self, entry_name: str) -> List[Tuple[int, str, str, str]]:
         return self._database.execute(f'''
             SELECT * FROM EnglishChad 
             WHERE name = '{entry_name}'
         ''').fetchall()
+    
+    def getAllEntries(self) -> List[Tuple[int, str, str, str]]:
+        return self._database.execute("SELECT * FROM EnglishChad").fetchall()

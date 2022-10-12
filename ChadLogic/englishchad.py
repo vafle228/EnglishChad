@@ -6,17 +6,28 @@ from MessageStructs.basestruct import IMessage
 from ChadLogic.addentry import AddEntryMixin
 from ChadLogic.delentry import DeleteEntryMixin
 from ChadLogic.getentry import GetEntryMixin
+from ChadLogic.helpmsg import HelpMessageMixin
 from ChadLogic.replies import HELP_MSG
+from ChadLogic.showentries import ShowAllEntriesMixin
 
 
-class EnglishChadBot(AddEntryMixin, DeleteEntryMixin, GetEntryMixin):
+class EnglishChadBot(
+    AddEntryMixin, 
+    DeleteEntryMixin, 
+    GetEntryMixin, 
+    ShowAllEntriesMixin, 
+    HelpMessageMixin
+):
     _handle_users = dict()
 
     @classmethod
     def startUserHandling(cls, message: IMessage, command: str) -> None:
         cls._handle_users[message.username] = {
+            "/help": [cls.sendHelpMessage],
+            "/start": [cls.sendHelpMessage],
             "/delSolution": [cls.startDelCommand ,cls.delEntry],
             "/getSolution": [cls.startGetCommand, cls.getEntry],
+            "/showSolutions": [cls.startShowCommand, cls.showEntriesList],
             "/addSolution": [cls.startAddCommand, cls.getEntryName, cls.getEntryFile],
         }[command]
     

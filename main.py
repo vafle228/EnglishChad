@@ -11,7 +11,10 @@ from MessageStructs.telegramstruct import TelegramMessage
 bot = telebot.TeleBot(API_KEY)
 
 
-@bot.message_handler(commands=["addSolution", "getSolution", "delSolution"])
+@bot.message_handler(commands=[
+    "start", "help", "addSolution", 
+    "getSolution", "delSolution", "showSolutions", 
+])
 def addNewEntry(message: Message):
     command = message.text.split(" ")[0]
     tele_messsage = TelegramMessage(message, bot)

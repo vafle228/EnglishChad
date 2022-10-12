@@ -9,14 +9,11 @@ from MessageStructs.basestruct import IMessage
 from ProgressBar.telergambar import telegramProgressBarWrapper
 
 from ChadLogic.replies import (ADD_NAME_ERROR_MSG, ADD_NAME_SUCCESS_MSG,
-                               ADD_START_MSG, ADD_SUCCESS_MSG)
+                               ADD_START_MSG, ADD_SUCCESS_MSG, ADD_FILE_ERROR_MSG)
 
 
 class AddEntryMixin:
     _replies = dict()
-
-    _database = ChadDataBaseManager()
-    _aws_storage = ChadAWSManager()
 
     @classmethod
     def startAddCommand(cls, message: IMessage) -> Tuple[bool, str]:
@@ -33,7 +30,7 @@ class AddEntryMixin:
     @classmethod
     def getEntryFile(cls, message: IMessage) -> Tuple[bool, str]:
         if not cls._validateEntryFile(message):
-            return (False, ADD_NAME_ERROR_MSG)
+            return (False, ADD_FILE_ERROR_MSG)
 
         cls._saveUserFile(message.file_url, message.file_name)
 
@@ -41,8 +38,8 @@ class AddEntryMixin:
         entry_name = cls._replies[username]
         file_path = f"{username}/{entry_name}/{message.file_name}"
 
-        cls._database.addEntry(entry_name, username, file_path)
-        cls._aws_storage.uploadFile(file_path, telegramProgressBarWrapper(message))
+        ChadDataBaseManager().addEntry(entry_name, username, file_path)
+        ChadAWSManager().uploadFile(file_path, telegramProgressBarWrapper(message))
 
         cls._replies.pop(username)
         os.remove(TEMP_ROOT.format(message.file_name))
@@ -61,7 +58,7 @@ class AddEntryMixin:
 
     @classmethod
     def _validateEntryAddName(cls, message: IMessage) -> bool:
-        return message.text and not cls._database.getEntryByName(message.text)
+        return message.text and not ChadDataBaseManager().getEntryByName(message.text)
 
     @classmethod
     def _validateEntryFile(cls, message: IMessage) -> bool:

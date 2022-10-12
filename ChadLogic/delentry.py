@@ -9,9 +9,6 @@ from ChadLogic.replies import (DELETE_ERROR_MSG, DELETE_START_MSG,
 
 
 class DeleteEntryMixin:
-    _database = ChadDataBaseManager()
-    _aws_storage = ChadAWSManager()
-
     @classmethod
     def startDelCommand(cls, message: IMessage) -> Tuple[bool, str]:
         return (True, DELETE_START_MSG)
@@ -22,16 +19,16 @@ class DeleteEntryMixin:
             return (False, DELETE_ERROR_MSG)
 
         entry_name = message.text
-        entry_path = cls._database.getEntryByName(entry_name)[0][3]
+        entry_path = ChadDataBaseManager().getEntryByName(entry_name)[0][3]
 
-        cls._aws_storage.deleteFile(entry_path)
-        cls._database.deleteEntryByNames(entry_name)
+        ChadAWSManager().deleteFile(entry_path)
+        ChadDataBaseManager().deleteEntryByNames(entry_name)
 
         return (True, DELETE_SUCCESS_MSG.format(entry_name))
 
     @classmethod
     def _hasPermission(cls, message: IMessage) -> bool:
         entry_name = message.text
-        entry = cls._database.getEntryByName(entry_name)
+        entry = ChadDataBaseManager().getEntryByName(entry_name)
 
         return entry and entry[0][1] == message.username
