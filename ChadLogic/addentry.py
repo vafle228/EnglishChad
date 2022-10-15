@@ -1,22 +1,24 @@
 import os
-from typing import Tuple
+from typing import Tuple, Dict
 
 import requests
 from ChadUtils.constants import TEMP_ROOT
 from DataBase.awsmanager import ChadAWSManager
-from DataBase.dbmanager import ChadDataBaseManager
+from DataBase.ORM.Solution import SolutionLevel, SolutionManager
 from MessageStructs.basestruct import IMessage
 from ProgressBar.telergambar import telegramProgressBarWrapper
 
-from ChadLogic.replies import (ADD_NAME_ERROR_MSG, ADD_NAME_SUCCESS_MSG,
-                               ADD_START_MSG, ADD_SUCCESS_MSG, ADD_FILE_ERROR_MSG)
+from ChadLogic.replies import (ADD_FILE_ERROR_MSG, ADD_LEVEL_ERROR_MSG,
+                               ADD_LEVEL_SUCCESS_MSG, ADD_NAME_ERROR_MSG,
+                               ADD_NAME_SUCCESS_MSG, ADD_START_MSG,
+                               ADD_SUCCESS_MSG)
 
 
 class AddEntryMixin:
-    _replies = dict()
+    _replies: Dict[str, list] = dict()
 
-    _aws_storage = ChadAWSManager().getInstance()
-    _database = ChadDataBaseManager().getInstance()
+    _database = SolutionManager
+    _aws_storage = ChadAWSManager.getInstance()
 
     @classmethod
     def startAddCommand(cls, message: IMessage) -> Tuple[bool, str]:
@@ -27,8 +29,16 @@ class AddEntryMixin:
         if not cls._validateEntryAddName(message):
             return (False, ADD_NAME_ERROR_MSG)
 
-        cls._replies[message.username] = message.text
+        cls._replies[message.username] = [message.text]
         return (True, ADD_NAME_SUCCESS_MSG)
+    
+    @classmethod
+    def getEntryLevel(cls, message: IMessage) -> Tuple[bool, str]:
+        if not cls._validateEntryLevel(message):
+            return (False, ADD_LEVEL_ERROR_MSG)
+        
+        cls._replies[message.username].append(message.text)
+        return (True, ADD_LEVEL_SUCCESS_MSG)
 
     @classmethod
     def getEntryFile(cls, message: IMessage) -> Tuple[bool, str]:
@@ -38,10 +48,10 @@ class AddEntryMixin:
         cls._saveUserFile(message.file_url, message.file_name)
 
         username = message.username
-        entry_name = cls._replies[username]
-        file_path = f"{username}/{entry_name}/{message.file_name}"
+        entry_name, entry_level = cls._replies[username]
+        file_path = f"{entry_level}/{username}/{entry_name}/{message.file_name}"
 
-        cls._database.addEntry(entry_name, username, file_path)
+        cls._database.addSolution(entry_name, username, entry_level, file_path)
         cls._aws_storage.uploadFile(file_path, telegramProgressBarWrapper(message))
 
         cls._replies.pop(username)
@@ -61,7 +71,11 @@ class AddEntryMixin:
 
     @classmethod
     def _validateEntryAddName(cls, message: IMessage) -> bool:
-        return message.text and not cls._database.getEntryByName(message.text)
+        return message.text and not cls._database.getSolutionByName(message.text).name
+    
+    @classmethod
+    def _validateEntryLevel(cls, message: IMessage) -> bool:
+        return SolutionLevel.hasValue(message.text)
 
     @classmethod
     def _validateEntryFile(cls, message: IMessage) -> bool:

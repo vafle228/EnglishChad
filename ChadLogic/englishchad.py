@@ -28,7 +28,12 @@ class EnglishChadBot(
             "/delSolution": [cls.startDelCommand ,cls.delEntry],
             "/getSolution": [cls.startGetCommand, cls.getEntry],
             "/showSolution": [cls.startShowCommand, cls.showEntriesList],
-            "/addSolution": [cls.startAddCommand, cls.getEntryName, cls.getEntryFile],
+            "/addSolution": [
+                cls.startAddCommand, 
+                cls.getEntryName, 
+                cls.getEntryLevel,
+                cls.getEntryFile
+            ],
         }[command]
     
     @classmethod

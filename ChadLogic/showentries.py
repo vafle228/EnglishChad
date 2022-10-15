@@ -3,7 +3,7 @@ from typing import List, Tuple
 
 from ChadUtils.constants import ENTRY_PER_PAGE
 from ChadUtils.subscriber import ChadSubscriber, Subscriptions
-from DataBase.dbmanager import ChadDataBaseManager
+from DataBase.ORM.Solution import SolutionManager, Solution
 from MessageStructs.basestruct import IMessage
 
 from ChadLogic.replies import (EMPTY_DB_ERROR, MAX_PAGE_ERROR, PAGE_ERROR_MSG,
@@ -11,8 +11,8 @@ from ChadLogic.replies import (EMPTY_DB_ERROR, MAX_PAGE_ERROR, PAGE_ERROR_MSG,
 
 
 class ShowAllEntriesMixin:
-    _database = ChadDataBaseManager().getInstance()
-    _etries_list: List[Tuple[int, str, str, str]] = None
+    _database = SolutionManager
+    _etries_list: List[Solution] = None
 
     @classmethod
     def startShowCommand(cls, message: IMessage) -> Tuple[bool, str]:
@@ -47,12 +47,13 @@ class ShowAllEntriesMixin:
         for i in range((cur_page - 1) * ENTRY_PER_PAGE, cur_page * ENTRY_PER_PAGE):
             if i == len(cls._etries_list):
                 return (False, entries + SHOW_SUCCESS_MSG.format(cls.total_page()))
-            entries += f"{i + 1}: {cls._etries_list[i][2]} от @{cls._etries_list[i][1]}\n"
+            entry = cls._etries_list[i]
+            entries += f"{entry.level}: {entry.name} от @{entry.author}\n"
         return (False, entries + SHOW_SUCCESS_MSG.format(cls.total_page()))
     
     @classmethod
     def _updateEntriesList(cls, *args, **kwargs) -> None:
-        cls._etries_list = cls._database.getAllEntries()
+        cls._etries_list = cls._database.getAllSolutions()
     
     @classmethod
     def _validatePageValue(cls, message: IMessage) -> bool:

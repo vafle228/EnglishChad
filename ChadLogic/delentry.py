@@ -1,7 +1,7 @@
 from typing import Tuple
 
 from DataBase.awsmanager import ChadAWSManager
-from DataBase.dbmanager import ChadDataBaseManager
+from DataBase.ORM.Solution import SolutionManager
 from MessageStructs.basestruct import IMessage
 
 from ChadLogic.replies import (DELETE_ERROR_MSG, DELETE_START_MSG,
@@ -9,8 +9,8 @@ from ChadLogic.replies import (DELETE_ERROR_MSG, DELETE_START_MSG,
 
 
 class DeleteEntryMixin:
-    _aws_storage = ChadAWSManager().getInstance()
-    _database = ChadDataBaseManager().getInstance()
+    _database = SolutionManager
+    _aws_storage = ChadAWSManager.getInstance()
 
     @classmethod
     def startDelCommand(cls, message: IMessage) -> Tuple[bool, str]:
@@ -22,16 +22,16 @@ class DeleteEntryMixin:
             return (False, DELETE_ERROR_MSG)
 
         entry_name = message.text
-        entry_path = cls._database.getEntryByName(entry_name)[0][3]
+        entry_path = cls._database.getSolutionByName(entry_name).path
 
         cls._aws_storage.deleteFile(entry_path)
-        cls._database.deleteEntryByNames(entry_name)
+        cls._database.deleteSolutionByName(entry_name)
 
         return (True, DELETE_SUCCESS_MSG.format(entry_name))
 
     @classmethod
     def _hasPermission(cls, message: IMessage) -> bool:
         entry_name = message.text
-        entry = cls._database.getEntryByName(entry_name)
+        entry = cls._database.getSolutionByName(entry_name)
 
-        return entry and entry[0][1] == message.username
+        return entry.name and entry.author == message.username

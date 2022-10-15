@@ -20,11 +20,11 @@ class ChadAWSManager:
             region_name=REGION_NAME,
         ).client('s3')
     
-    @classmethod
-    def getInstance(cls):
-        if cls._chad_aws is None:
-            cls._chad_aws = cls()
-        return cls._chad_aws
+    @staticmethod
+    def getInstance():
+        if ChadAWSManager._chad_aws is None:
+            ChadAWSManager._chad_aws = ChadAWSManager()
+        return ChadAWSManager._chad_aws
 
     def uploadFile(self, upload_path: str, callback: Union[Type[IProgressBar], None] = None) -> None:
         with open(TEMP_ROOT.format(Path(upload_path).name), "rb") as file:
