@@ -4,7 +4,7 @@ from typing import Tuple, Union
 
 from ChadUtils.constants import TEMP_ROOT
 from DataBase.awsmanager import ChadAWSManager
-from DataBase.ORM.Solution import SolutionManager
+from DataBase.Solution.solutionmanager import SolutionManager
 from MessageStructs.basestruct import IMessage
 from ProgressBar.telergambar import telegramProgressBarWrapper
 

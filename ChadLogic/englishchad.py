@@ -9,6 +9,8 @@ from ChadLogic.getentry import GetEntryMixin
 from ChadLogic.helpmsg import HelpMessageMixin
 from ChadLogic.replies import HELP_MSG
 from ChadLogic.showentries import ShowAllEntriesMixin
+from ChadLogic.subscribeuser import SubscribeUserMixin
+from ChadLogic.unsubscribeuser import UnsubscribeUserMixin
 
 
 class EnglishChadBot(
@@ -16,7 +18,9 @@ class EnglishChadBot(
     DeleteEntryMixin, 
     GetEntryMixin, 
     ShowAllEntriesMixin, 
-    HelpMessageMixin
+    HelpMessageMixin,
+    SubscribeUserMixin,
+    UnsubscribeUserMixin
 ):
     _handle_users = dict()
 
@@ -25,15 +29,17 @@ class EnglishChadBot(
         cls._handle_users[message.username] = {
             "/help": [cls.sendHelpMessage],
             "/start": [cls.sendHelpMessage],
-            "/delSolution": [cls.startDelCommand ,cls.delEntry],
-            "/getSolution": [cls.startGetCommand, cls.getEntry],
-            "/showSolution": [cls.startShowCommand, cls.showEntriesList],
-            "/addSolution": [
+            "/delsolution": [cls.startDelCommand ,cls.delEntry],
+            "/getsolution": [cls.startGetCommand, cls.getEntry],
+            "/showsolution": [cls.startShowCommand, cls.showEntriesList],
+            "/addsolution": [
                 cls.startAddCommand, 
                 cls.getEntryName, 
                 cls.getEntryLevel,
                 cls.getEntryFile
             ],
+            "/subscribe": [cls.startSubscribeCommand, cls.subscribeUser],
+            "/unsubscribe": [cls.startUnsubcribeCommand, cls.unsubscribeUser],
         }[command]
     
     @classmethod

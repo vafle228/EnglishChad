@@ -1,7 +1,7 @@
 from typing import Tuple
 
 from DataBase.awsmanager import ChadAWSManager
-from DataBase.ORM.Solution import SolutionManager
+from DataBase.Solution.solutionmanager import SolutionManager
 from MessageStructs.basestruct import IMessage
 
 from ChadLogic.replies import (DELETE_ERROR_MSG, DELETE_START_MSG,

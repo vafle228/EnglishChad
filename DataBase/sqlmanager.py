@@ -20,20 +20,22 @@ class ChadSqlManager:
         return ChadSqlManager._chad_base
     
     def dataBaseInit(self, init_command: str, table_name: str) -> None:
-        if not self.tableExists(table_name):
+        if self.tableExists(table_name):
             return
         
         with self._connection.cursor() as cursor:
             cursor.execute(init_command)
             self._connection.commit()
     
-    def tableExists(self, table_name) -> bool:
+    def tableExists(self, table_name: str) -> bool:
         with self._connection.cursor() as cursor:
             cursor.execute(f'''
-                SELECT * FROM information_schema.tables 
-                WHERE table_name = '{table_name}' 
+                SELECT EXISTS(SELECT 1 FROM information_schema.tables 
+                    WHERE table_catalog='{DB_NAME}' AND 
+                    table_schema='public' AND
+                    table_name='{table_name.lower()}')
             ''')
-            return bool(cursor.rowcount)
+            return cursor.fetchone()[0]
 
     def addEntry(self, insert_command) -> None:
         with self._connection.cursor() as cursor:

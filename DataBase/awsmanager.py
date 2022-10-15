@@ -28,7 +28,6 @@ class ChadAWSManager:
 
     def uploadFile(self, upload_path: str, callback: Union[Type[IProgressBar], None] = None) -> None:
         with open(TEMP_ROOT.format(Path(upload_path).name), "rb") as file:
-
             if callback is not None: 
                 callback = callback(getsize(
                     TEMP_ROOT.format(Path(upload_path).name)
@@ -37,11 +36,9 @@ class ChadAWSManager:
             self._s3_client.upload_fileobj(
                 file, self._bucket_name, upload_path, Callback=callback
             )
-        file.close()
 
     def downloadFile(self, file_path: str, callback: Union[Type[IProgressBar], None] = None) -> None:
         with open(TEMP_ROOT.format(Path(file_path).name), "wb") as file:
-            
             if callback is not None: 
                 callback = callback(
                     self.getFileHeadData(file_path)
@@ -51,7 +48,6 @@ class ChadAWSManager:
             self._s3_client.download_fileobj(
                 self._bucket_name, file_path, file, Callback=callback
             )
-        file.close()
 
     def deleteFile(self, file_path: str) -> None:
         self._s3_client.delete_object(

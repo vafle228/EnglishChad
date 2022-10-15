@@ -1,10 +1,11 @@
 import os
-from typing import Tuple, Dict
+from typing import Dict, Tuple
 
 import requests
 from ChadUtils.constants import TEMP_ROOT
 from DataBase.awsmanager import ChadAWSManager
-from DataBase.ORM.Solution import SolutionLevel, SolutionManager
+from DataBase.Solution.solution import SolutionLevel
+from DataBase.Solution.solutionmanager import SolutionManager
 from MessageStructs.basestruct import IMessage
 from ProgressBar.telergambar import telegramProgressBarWrapper
 
@@ -51,8 +52,8 @@ class AddEntryMixin:
         entry_name, entry_level = cls._replies[username]
         file_path = f"{entry_level}/{username}/{entry_name}/{message.file_name}"
 
-        cls._database.addSolution(entry_name, username, entry_level, file_path)
         cls._aws_storage.uploadFile(file_path, telegramProgressBarWrapper(message))
+        cls._database.addSolution(entry_name, username, entry_level, file_path)
 
         cls._replies.pop(username)
         os.remove(TEMP_ROOT.format(message.file_name))
@@ -63,7 +64,6 @@ class AddEntryMixin:
     def _saveUserFile(cls, file_url: str, file_name: str) -> None:
         with open(TEMP_ROOT.format(file_name), "wb") as file:
             file.write(cls._downloadFileFromApi(file_url))
-        file.close()
 
     @classmethod
     def _downloadFileFromApi(cls, file_url: str) -> bytes:
