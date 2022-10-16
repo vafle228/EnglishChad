@@ -16,7 +16,7 @@ class TelegramMessage(IMessage):
     
     @property
     def username(self) -> str:
-        return self._message.from_user.username or self._message.from_user.id
+        return self._message.from_user.username or f'{self._message.from_user.id}'
     
     @property
     def text(self) -> Union[str, None]:
