@@ -37,12 +37,12 @@ class ChadSqlManager:
             ''')
             return cursor.fetchone()[0]
 
-    def addEntry(self, insert_command) -> None:
+    def addEntry(self, insert_command: str) -> None:
         with self._connection.cursor() as cursor:
             cursor.execute(insert_command)
             self._connection.commit()
 
-    def deleteEntry(self, delete_command) -> None:
+    def deleteEntry(self, delete_command: str) -> None:
         with self._connection.cursor() as cursor:
             cursor.execute(delete_command)
             self._connection.commit()

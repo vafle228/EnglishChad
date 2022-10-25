@@ -3,13 +3,13 @@ from MessageStructs.basestruct import IMessage
 
 
 class IProgressBar(ABC):
-    def __init__(self, total_size) -> None:
+    def __init__(self, total_size: int) -> None:
         self._current_size = 0
         self._total_size = total_size
 
         self._message = self._sendInitialMessgae("0 %")
     
-    def updateProgress(self, downloaded) -> None:
+    def updateProgress(self, downloaded: int) -> None:
         self._current_size += downloaded
         progress = (self._current_size / self._total_size) * 100
 

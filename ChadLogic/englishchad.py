@@ -1,5 +1,5 @@
 from io import BufferedReader
-from typing import Union
+from typing import Callable, Union, Dict, List
 
 from MessageStructs.basestruct import IMessage
 
@@ -22,7 +22,7 @@ class EnglishChadBot(
     SubscribeUserMixin,
     UnsubscribeUserMixin
 ):
-    _handle_users = dict()
+    _handle_users: Dict[str, List[Callable]] = dict()
 
     @classmethod
     def startUserHandling(cls, message: IMessage, command: str) -> None:
