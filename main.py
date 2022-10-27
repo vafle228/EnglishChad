@@ -26,6 +26,7 @@ def addNewEntry(message: Message):
 
 @bot.message_handler(content_types=["document", "text"])
 def replyToMessage(message: Message):
+    message = removeErrorSymbols(message)
     tele_messsage = TelegramMessage(message, bot)
     result = EnglishChadBot.handleUserMessage(tele_messsage)
 
@@ -33,7 +34,15 @@ def replyToMessage(message: Message):
         return bot.send_message(message.chat.id, result)
     
     bot.send_document(message.chat.id, result)
-    result.close(); os.remove(result.name) 
+    result.close(); os.remove(result.name)
+
+
+def removeErrorSymbols(message: Message):
+    if message.text is not None:
+        message.text = message.text.replace("'", "")
+    if message.from_user.username is not None:
+        message.from_user.username = message.from_user.username.replace("'", "")
+    return message
 
 
 if __name__ == "__main__":
