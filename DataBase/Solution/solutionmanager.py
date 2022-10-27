@@ -21,11 +21,14 @@ class SolutionManager:
     
     @classmethod
     def addSolution(cls, name: str, author: str, level: str, file_path: str) -> None:
+        name = name.replace("'", "")
+        
         cls._database.addEntry(f'''
             INSERT INTO ChadSolution 
             (name, author, level, path) VALUES 
             ('{name}', '{author}', '{level}', '{file_path}')
         ''')
+        
         ChadSubscriber.emitToSubscribers(Subscriptions.DATA_BASE_UPDATE)
         ChadSubscriber.emitToSubscribers(Subscriptions.SOLUTION_ADD, level, name)
     
