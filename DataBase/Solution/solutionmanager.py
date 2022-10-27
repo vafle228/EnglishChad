@@ -34,6 +34,8 @@ class SolutionManager:
     
     @classmethod
     def getSolutionByName(cls, solution_name: str) -> Solution:
+        solution_name = solution_name.replace("'", "")
+
         solution = cls._database.getEntries(f'''
             SELECT * FROM ChadSolution 
             WHERE name = '{solution_name}'
@@ -42,6 +44,8 @@ class SolutionManager:
     
     @classmethod
     def deleteSolutionByName(cls, solution_name: str) -> None:
+        solution_name = solution_name.replace("'", "")
+        
         cls._database.deleteEntry(f'''
             DELETE FROM ChadSolution 
             WHERE name = '{solution_name}'
