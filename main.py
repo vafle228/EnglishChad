@@ -45,8 +45,14 @@ def removeErrorSymbols(message: Message):
     return message
 
 
-if __name__ == "__main__":
-    while "Main bot loop":
+def bot_polling():
+    while "Bot polling loop":
         try:
+            print("New bot instance started")
             bot.polling(none_stop=True, interval=0)
-        except Exception as e: print(e)
+        except Exception as e:
+            print(f"Bot failed with \n{e}")
+            bot.stop_polling()
+
+
+if __name__ == "__main__": bot_polling()
