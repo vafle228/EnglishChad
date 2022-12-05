@@ -8,10 +8,13 @@ API_KEY = "5706248141:AAHpdzAaHLeYia2VFFh420Rog2dzPqt08rM"
 API_REQUEST = f"https://api.telegram.org/file/bot{API_KEY}/"
 
 # Postrgres constants
-HOST = "127.0.0.1"
-USER = "postgres"
-PASSWORD = "Admin"
-DB_NAME = "postgres"
+HOST = "peanut.db.elephantsql.com"
+USER = "vfxqvdxd"
+PASSWORD = "GC1UDliy-vHW4crmuUU2gR_tgdLibf7J"
+DB_NAME = "vfxqvdxd"
+
+# Server constants
+SERVER_HOOK = "https://englishgigachad.pythonanywhere.com/"
 
 # Bot constants
 TEMP_ROOT = "tmp/{0}"
