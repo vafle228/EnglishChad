@@ -153,3 +153,4 @@ cython_debug/
 .vscode/launch.json
 src/Config/secret.py
 TODO.txt
+*.db

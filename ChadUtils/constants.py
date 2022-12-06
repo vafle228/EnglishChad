@@ -10,7 +10,7 @@ API_KEY = "5706248141:AAHpdzAaHLeYia2VFFh420Rog2dzPqt08rM"
 API_REQUEST = f"https://api.telegram.org/file/bot{API_KEY}/"
 
 # Sqlite3 constants
-DB_LOCATION = os.getcwd() + "/chad-db.sqlite3"
+DB_LOCATION = os.getcwd() + "/chad-db.db"
 
 # Server constants
 SERVER_HOOK = "https://englishgigachad.pythonanywhere.com/"
