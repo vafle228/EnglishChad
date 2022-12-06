@@ -17,7 +17,7 @@ class SolutionManager:
                 author TEXT NOT NULL,
                 name TEXT NOT NULL UNIQUE,
                 path TEXT NOT NULL UNIQUE)
-        ''', 'ChadSolution')
+            ''')
     
     @classmethod
     def addSolution(cls, name: str, author: str, level: str, file_path: str) -> None:

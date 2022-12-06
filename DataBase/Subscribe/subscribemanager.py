@@ -14,7 +14,7 @@ class SubscribeManager:
                 id SERIAL PRIMARY KEY,
                 level TEXT NOT NULL,
                 chatid INTEGER NOT NULL)
-        ''', 'ChadSubscribe')
+            ''')
     
     @classmethod
     def addSubscribe(cls, level: str, chatid: int) -> None:
